@@ -84,7 +84,7 @@ public:
 protected:
   CommandIterationUpdate() {};
 public:
-  typedef itk::GradientDescentOptimizerv4 OptimizerType;
+  typedef itk::LBFGSBOptimizerv4 OptimizerType;
   typedef const OptimizerType *                              OptimizerPointer;
   void Execute(itk::Object *caller,
                const itk::EventObject & event) ITK_OVERRIDE
@@ -105,6 +105,7 @@ public:
     std::cout << optimizer->GetCurrentIteration() << " = ";
     std::cout << optimizer->GetValue() << " : ";
     std::cout << optimizer->GetCurrentPosition() << std::endl;
+    //std::cout << optimizer->GetTransform() << std::endl;
     
     }
 
@@ -128,9 +129,9 @@ int main( int argc, char *argv[] )
   typedef itk::Image< PixelType, Dimension >  FixedImageType;
   typedef itk::Image< PixelType, Dimension >  MovingImageType;
 
-  typedef itk::TranslationTransform< double, Dimension >      TransformType;
+  typedef SkewTransform< double, Dimension >      TransformType;
 
-  typedef itk::GradientDescentOptimizerv4 OptimizerType;
+  typedef itk::LBFGSBOptimizerv4 OptimizerType;
 
   typedef itk::ImageRegistrationMethodv4<
                                     FixedImageType,
@@ -181,6 +182,19 @@ int main( int argc, char *argv[] )
   
   TransformType::Pointer initialTransform = TransformType::New();
   initialTransform->SetIdentity();
+  
+  TransformType::ParametersType p;
+  p.SetSize(2);
+  p[0] = .4;
+  p[1] = 2;
+  initialTransform->SetParameters(p);
+  
+  TransformType::FixedParametersType fp;
+  fp.SetSize(2);
+  fp[0] = -20   ;
+  fp[1] = 20;
+  initialTransform->SetFixedParameters(fp);
+  
   registration->SetInitialTransform(initialTransform);
   
  // One level registration process without shrinking and smoothing.

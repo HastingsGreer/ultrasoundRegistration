@@ -1,0 +1,67 @@
+[1mdiff --git a/Skew2D.cxx b/Skew2D.cxx[m
+[1mindex f382190..48e82d1 100644[m
+[1m--- a/Skew2D.cxx[m
+[1m+++ b/Skew2D.cxx[m
+[36m@@ -64,6 +64,9 @@[m
+ #include "itkGradientDescentOptimizerv4.h"[m
+ #include "itkRegistrationParameterScalesFromPhysicalShift.h"[m
+ [m
+[32m+[m[32m#include "itkLBFGSBOptimizerv4.h"[m
+[32m+[m[32m#include "itkAffineTransform.h"[m
+[32m+[m
+ #include "itkImageFileReader.h"[m
+ #include "itkImageFileWriter.h"[m
+ [m
+[36m@@ -125,7 +128,7 @@[m [mint main( int argc, char *argv[] )[m
+   typedef itk::Image< PixelType, Dimension >  FixedImageType;[m
+   typedef itk::Image< PixelType, Dimension >  MovingImageType;[m
+ [m
+[31m-  typedef itk::AffineTransform< double, Dimension >      TransformType;[m
+[32m+[m[32m  typedef itk::TranslationTransform< double, Dimension >      TransformType;[m
+ [m
+   typedef itk::GradientDescentOptimizerv4 OptimizerType;[m
+ [m
+[36m@@ -179,8 +182,8 @@[m [mint main( int argc, char *argv[] )[m
+   TransformType::Pointer initialTransform = TransformType::New();[m
+   initialTransform->SetIdentity();[m
+   registration->SetInitialTransform(initialTransform);[m
+[31m-[m
+[31m-  // One level registration process without shrinking and smoothing.[m
+[32m+[m[41m  [m
+[32m+[m[32m // One level registration process without shrinking and smoothing.[m
+   //[m
+   const unsigned int numberOfLevels = 1;[m
+ [m
+[36m@@ -195,15 +198,31 @@[m [mint main( int argc, char *argv[] )[m
+   registration->SetNumberOfLevels ( numberOfLevels );[m
+   registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );[m
+   registration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );[m
+[32m+[m
+[32m+[m
+   [m
+   // Lock transform to only optimize skew[m
+[31m-  [m
+[32m+[m[32m  /*[m
+   RegistrationType::OptimizerWeightsType weights(6);[m
+   weights.Fill(0);[m
+   weights[1] = 1;[m
+   weights[4] = 1;[m
+   std::cout << weights << std::endl;[m
+   registration->SetOptimizerWeights(weights);[m
+[32m+[m[32m  */[m
+[32m+[m[41m  [m
+[32m+[m[32m  /* copied from example 12*/[m
+[32m+[m[32m  /*const unsigned int numParameters = 2;[m
+[32m+[m[32m  OptimizerType::BoundSelectionType boundSelect( numParameters );[m
+[32m+[m[32m  OptimizerType::BoundValueType upperBound( numParameters );[m
+[32m+[m[32m  OptimizerType::BoundValueType lowerBound( numParameters );[m
+[32m+[m[32m  boundSelect.Fill( 0 );[m
+[32m+[m[32m  upperBound.Fill( 0.0 );[m
+[32m+[m[32m  lowerBound.Fill( 0.0 );[m
+[32m+[m[32m  optimizer->SetBoundSelection( boundSelect );[m
+[32m+[m[32m  optimizer->SetUpperBound( upperBound );[m
+[32m+[m[32m  optimizer->SetLowerBound( lowerBound );*/[m
+[32m+[m[32m  /*end copypasta*/[m
+   [m
+   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();[m
+   [m
