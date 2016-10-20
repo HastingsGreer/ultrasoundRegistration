@@ -81,8 +81,9 @@ SkewTransform<TParametersValueType, NDimensions>
    * |0 z 0|
    * |0 0 z| */
   for(unsigned int i = 0; i < NDimensions; i++){
-    jacobian(i, i) = p[2];
+    jacobian(i, i) = p[NDimensions - 1];
   }
+  //std::cout<< "jacobian:" << std::endl << jacobian << std::endl;
   
   
 }
