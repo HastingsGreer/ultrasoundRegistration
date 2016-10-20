@@ -130,7 +130,7 @@ int main( int argc, char *argv[] )
 
   typedef itk::TranslationTransform< double, Dimension >      TransformType;
 
-  typedef itk::LBFGSBOptimizerv4 OptimizerType;
+  typedef itk::GradientDescentOptimizerv4 OptimizerType;
 
   typedef itk::ImageRegistrationMethodv4<
                                     FixedImageType,
