@@ -183,11 +183,11 @@ int main( int argc, char *argv[] )
   TransformType::Pointer initialTransform = TransformType::New();
   initialTransform->SetIdentity();
   
-  TransformType::ParametersType p;
+/*  TransformType::ParametersType p;
   p.SetSize(2);
   p[0] = 0;
-  p[1] = 1;
-  initialTransform->SetParameters(p);
+  p[1] = 0.7;
+  initialTransform->SetParameters(p); */
   
   TransformType::FixedParametersType fp;
   fp.SetSize(2);

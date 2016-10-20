@@ -61,7 +61,7 @@ SkewTransform<TParametersValueType, NDimensions>
   }
   //this->matrixMTime.Modified();
   this->SetMatrix(matrix);
-  std::cout << this->GetMatrix() << std::endl;
+  //std::cout << this->GetMatrix() << std::endl;
   this->Modified();
 }
 
