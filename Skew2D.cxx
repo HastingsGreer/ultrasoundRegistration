@@ -168,14 +168,14 @@ int main( int argc, char *argv[] )
   //optimizer->SetMinimumStepLength( 0.001 );
   //optimizer->SetRelaxationFactor( 0.75 );
   //optimizer->SetNumberOfIterations( 400 );
-  //typedef itk::RegistrationParameterScalesFromPhysicalShift < MetricType > RegistrationParameterScalesType; 
+  typedef itk::RegistrationParameterScalesFromPhysicalShift < MetricType > RegistrationParameterScalesType; 
   
-  //RegistrationParameterScalesType::Pointer shiftScaleEstimator =  RegistrationParameterScalesType::New();
-  //shiftScaleEstimator->SetMetric(metric);
+  RegistrationParameterScalesType::Pointer shiftScaleEstimator =  RegistrationParameterScalesType::New();
+  shiftScaleEstimator->SetMetric(metric);
   
   
-  //optimizer->SetScalesEstimator(shiftScaleEstimator);
-  //optimizer->SetMaximumStepSizeInPhysicalUnits(.03);
+  optimizer->SetScalesEstimator(shiftScaleEstimator);
+  optimizer->SetMaximumStepSizeInPhysicalUnits(.03);
   
   // Initialize the transform
   
@@ -195,7 +195,7 @@ int main( int argc, char *argv[] )
   */
   
   /* copied from example 12*/
-  const unsigned int numParameters = 2;
+  /*const unsigned int numParameters = 2;
   OptimizerType::BoundSelectionType boundSelect( numParameters );
   OptimizerType::BoundValueType upperBound( numParameters );
   OptimizerType::BoundValueType lowerBound( numParameters );
@@ -204,7 +204,7 @@ int main( int argc, char *argv[] )
   lowerBound.Fill( 0.0 );
   optimizer->SetBoundSelection( boundSelect );
   optimizer->SetUpperBound( upperBound );
-  optimizer->SetLowerBound( lowerBound );
+  optimizer->SetLowerBound( lowerBound );*/
   /*end copypasta*/
   
   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
