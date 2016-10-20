@@ -8,7 +8,7 @@ template<
   unsigned int NDimensions>
 SkewTransform<TParametersValueType, NDimensions>
 ::SkewTransform() :
-  Superclass(NDimensions * (NDimesnions + 1))
+  Superclass(NDimensions)
 {}
 
 template< 
@@ -20,14 +20,15 @@ SkewTransform<TParametersValueType, NDimensions>
 
 template< 
   typename TParametersValueType,
-  unsigned int NDimensions>
-const ParametersType & 
+  unsigned int NDimensions> 
+const typename SkewTransform<TParametersValueType, NDimensions>::ParametersType &
 SkewTransform<TParametersValueType, NDimensions>
-::GetParameters()
+::GetParameters() const
 {
-  for( unsigned int row = 0; row < NDimensions; row++){
-  {  
-    this->m_Parameters[row] = m_Matrix[row][NDimensions - 1];
+  const MatrixType& matrix = this->GetMatrix();
+  for( unsigned int row = 0; row < NDimensions; row++)
+  {
+    this->m_Parameters[row] = matrix[row][NDimensions - 1];
   }
   return this->m_Parameters;
 }
@@ -52,12 +53,14 @@ SkewTransform<TParametersValueType, NDimensions>
   {
     this->m_Parameters = parameters;
   }
+  
+  MatrixType matrix = this->GetMatrix();
   for( unsigned int row = 0; row < NDimensions; row++)
   {
-    m_Matrix[row][NDimensions - 1] = this->m_Parameters[row];
+    matrix[row][NDimensions - 1] = this->m_Parameters[row];
   }
-  m_MatrixMTime.Modified();
-  
+  //this->matrixMTime.Modified();
+  this->SetMatrix(matrix);
   this->Modified();
 }
 
@@ -82,3 +85,6 @@ SkewTransform<TParametersValueType, NDimensions>
   
   
 }
+
+#endif
+

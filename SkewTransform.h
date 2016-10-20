@@ -10,6 +10,7 @@ template<
 class SkewTransform:
   public itk::MatrixOffsetTransformBase< TParametersValueType, NDimensions, NDimensions>
 {
+public:
   /** Transform by the NxN matrix
       [i j v] (3D)
       or 
@@ -81,13 +82,15 @@ class SkewTransform:
    *  allowing for thread-safety. */
   virtual void ComputeJacobianWithRespectToParameters(const InputPointType  & p, JacobianType & jacobian) const ITK_OVERRIDE;
   
-protected:
+
   SkewTransform();
-  
+
   virtual ~SkewTransform();
 
 private:
   //ITK_DISALLOW_COPY_AND_ASSIGN(SkewTransform);
 };
-  
+#include "SkewTransform.hxx"
+
+
 #endif

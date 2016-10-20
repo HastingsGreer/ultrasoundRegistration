@@ -64,6 +64,9 @@
 #include "itkGradientDescentOptimizerv4.h"
 #include "itkRegistrationParameterScalesFromPhysicalShift.h"
 
+#include "itkLBFGSBOptimizerv4.h"
+#include "itkAffineTransform.h"
+
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
@@ -125,9 +128,9 @@ int main( int argc, char *argv[] )
   typedef itk::Image< PixelType, Dimension >  FixedImageType;
   typedef itk::Image< PixelType, Dimension >  MovingImageType;
 
-  typedef itk::AffineTransform< double, Dimension >      TransformType;
+  typedef itk::TranslationTransform< double, Dimension >      TransformType;
 
-  typedef itk::GradientDescentOptimizerv4 OptimizerType;
+  typedef itk::LBFGSBOptimizerv4 OptimizerType;
 
   typedef itk::ImageRegistrationMethodv4<
                                     FixedImageType,
@@ -165,14 +168,14 @@ int main( int argc, char *argv[] )
   //optimizer->SetMinimumStepLength( 0.001 );
   //optimizer->SetRelaxationFactor( 0.75 );
   //optimizer->SetNumberOfIterations( 400 );
-  typedef itk::RegistrationParameterScalesFromPhysicalShift < MetricType > RegistrationParameterScalesType; 
+  //typedef itk::RegistrationParameterScalesFromPhysicalShift < MetricType > RegistrationParameterScalesType; 
   
-  RegistrationParameterScalesType::Pointer shiftScaleEstimator =  RegistrationParameterScalesType::New();
-  shiftScaleEstimator->SetMetric(metric);
+  //RegistrationParameterScalesType::Pointer shiftScaleEstimator =  RegistrationParameterScalesType::New();
+  //shiftScaleEstimator->SetMetric(metric);
   
   
-  optimizer->SetScalesEstimator(shiftScaleEstimator);
-  optimizer->SetMaximumStepSizeInPhysicalUnits(.03);
+  //optimizer->SetScalesEstimator(shiftScaleEstimator);
+  //optimizer->SetMaximumStepSizeInPhysicalUnits(.03);
   
   // Initialize the transform
   
@@ -180,30 +183,29 @@ int main( int argc, char *argv[] )
   initialTransform->SetIdentity();
   registration->SetInitialTransform(initialTransform);
 
-  // One level registration process without shrinking and smoothing.
-  //
-  const unsigned int numberOfLevels = 1;
-
-  RegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel;
-  shrinkFactorsPerLevel.SetSize( 1 );
-  shrinkFactorsPerLevel[0] = 1;
-
-  RegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
-  smoothingSigmasPerLevel.SetSize( 1 );
-  smoothingSigmasPerLevel[0] = 0;
-
-  registration->SetNumberOfLevels ( numberOfLevels );
-  registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
-  registration->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
   
   // Lock transform to only optimize skew
-  
+  /*
   RegistrationType::OptimizerWeightsType weights(6);
   weights.Fill(0);
   weights[1] = 1;
   weights[4] = 1;
   std::cout << weights << std::endl;
   registration->SetOptimizerWeights(weights);
+  */
+  
+  /* copied from example 12*/
+  const unsigned int numParameters = 2;
+  OptimizerType::BoundSelectionType boundSelect( numParameters );
+  OptimizerType::BoundValueType upperBound( numParameters );
+  OptimizerType::BoundValueType lowerBound( numParameters );
+  boundSelect.Fill( 0 );
+  upperBound.Fill( 0.0 );
+  lowerBound.Fill( 0.0 );
+  optimizer->SetBoundSelection( boundSelect );
+  optimizer->SetUpperBound( upperBound );
+  optimizer->SetLowerBound( lowerBound );
+  /*end copypasta*/
   
   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
   
