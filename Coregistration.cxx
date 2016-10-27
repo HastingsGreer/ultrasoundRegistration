@@ -245,55 +245,6 @@ int main( int argc, char *argv[] )
     std::cout << err << std::endl;
     return EXIT_FAILURE;
     }
-  // Software Guide : EndCodeSnippet
-
-
-  //  Software Guide : BeginLatex
-  //
-  //  The registration process is applied to the following images in \code{Examples/Data}:
-  //
-  //  \begin{itemize}
-  //  \item \code{BrainProtonDensitySliceBorder20.png}
-  //  \item \code{BrainProtonDensitySliceShifted13x17y.png}
-  //  \end{itemize}
-  //
-  //  It produces the following output.
-  //
-  //  \begin{verbatim}
-  //   0 = 4499.45 : [2.9286959512455857, 2.7244705953923805]
-  //   1 = 3860.84 : [6.135143776902402, 5.115849348610004]
-  //   2 = 3508.02 : [8.822660051952475, 8.078492808653918]
-  //   3 = 3117.31 : [10.968558473732326, 11.454158663474674]
-  //   4 = 2125.43 : [13.105290365964755, 14.835634202454191]
-  //   5 = 911.308 : [12.75173580401588, 18.819978461140323]
-  //   6 = 741.417 : [13.139053510563274, 16.857840597942413]
-  //   7 = 16.8918 : [12.356787624301035, 17.480785285045815]
-  //   8 = 233.714 : [12.79212443526829, 17.234854683011704]
-  //   9 = 39.8027 : [13.167510875734614, 16.904574468172815]
-  //   10 = 16.5731 : [12.938831371165355, 17.005597654570586]
-  //   11 = 1.68763 : [13.063495692092735, 16.996443033457986]
-  //   12 = 1.79437 : [13.001061362657559, 16.999307384689935]
-  //   13 = 0.000762481 : [12.945418587211314, 17.0277701944711]
-  //   14 = 1.74802 : [12.974454390534774, 17.01621663980765]
-  //   15 = 0.430253 : [13.002439510423766, 17.002309966416835]
-  //   16 = 0.00531816 : [12.989877586882951, 16.99301810428082]
-  //   17 = 0.0721346 : [12.996759235073881, 16.996716492365685]
-  //   18 = 0.00996773 : [13.00288423694971, 17.00156618393022]
-  //   19 = 0.00516378 : [12.99928608126834, 17.000045636412015]
-  //   20 = 0.000228075 : [13.00123653240422, 16.999943471681494]
-  //  \end{verbatim}
-  //  You can verify from the code in the \code{Execute()} method that the first
-  //  column is the iteration number, the second column is the metric value and
-  //  the third and fourth columns are the parameters of the transform, which
-  //  is a $2D$ translation transform in this case. By tracking these values as
-  //  the registration progresses, you will be able to determine whether the
-  //  optimizer is advancing in the right direction and whether the step-length
-  //  is reasonable or not.  That will allow you to interrupt the registration
-  //  process and fine-tune parameters without having to wait until the
-  //  optimizer stops by itself.
-  //
-  //  Software Guide : EndLatex
-
 
   TransformType::ParametersType finalParameters =
                             registration->GetOutput()->Get()->GetParameters();
@@ -312,51 +263,8 @@ int main( int argc, char *argv[] )
   std::cout << "Optimal metric value = " << bestValue << std::endl;
   
   
-  printTransform(argv[1], argv[3], registration->GetTransform());
-  /*
-  // Prepare the resampling filter in order to map the moving image.
-  //
-  typedef itk::ResampleImageFilter<
-                            MovingImageType,
-                            FixedImageType >    ResampleFilterType;
-
-  ResampleFilterType::Pointer resample = ResampleFilterType::New();
-
-  resample->SetTransform( registration->GetTransform() );
-  resample->SetInput( movingImageReader->GetOutput() );
-
-  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
-
-  resample->SetSize(    fixedImage->GetLargestPossibleRegion().GetSize() );
-  resample->SetOutputOrigin(  fixedImage->GetOrigin() );
-  resample->SetOutputSpacing( fixedImage->GetSpacing() );
-  resample->SetOutputDirection( fixedImage->GetDirection() );
-  resample->SetDefaultPixelValue( 100 );
-
-
-  // Prepare a writer and caster filters to send the resampled moving image to
-  // a file
-  //
-  typedef  unsigned char  OutputPixelType;
-
-  typedef itk::Image< OutputPixelType, Dimension > OutputImageType;
-
-  typedef itk::CastImageFilter<
-                        FixedImageType,
-                        OutputImageType > CastFilterType;
-
-  typedef itk::ImageFileWriter< OutputImageType >  WriterType;
-
-  WriterType::Pointer      writer =  WriterType::New();
-  CastFilterType::Pointer  caster =  CastFilterType::New();
-
-
-  writer->SetFileName( argv[3] );
-
-  caster->SetInput( resample->GetOutput() );
-  writer->SetInput( caster->GetOutput()   );
-  writer->Update();
-
-  */
+  printTransform(argv[2], argv[3], registration->GetTransform());
+  
+  
   return EXIT_SUCCESS;
 }

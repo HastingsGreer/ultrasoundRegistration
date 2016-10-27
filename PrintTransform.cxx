@@ -20,6 +20,7 @@ void printTransform(char * inputFilename, char * outputFilename, itk::Transform<
   ImageReaderType::Pointer  imageReader  = ImageReaderType::New();
 
   imageReader->SetFileName(inputFilename);
+  imageReader->Update();
   
   typedef itk::ResampleImageFilter<
                             ImageType,
@@ -49,9 +50,9 @@ void printTransform(char * inputFilename, char * outputFilename, itk::Transform<
 
   typedef itk::CastImageFilter<
                         ImageType,
-                        ImageType > CastFilterType;
+                        OutputImageType > CastFilterType;
 
-  typedef itk::ImageFileWriter< ImageType >  WriterType;
+  typedef itk::ImageFileWriter< OutputImageType >  WriterType;
 
   WriterType::Pointer      writer =  WriterType::New();
   CastFilterType::Pointer  caster =  CastFilterType::New();
