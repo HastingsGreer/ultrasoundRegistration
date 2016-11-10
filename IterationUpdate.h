@@ -30,6 +30,7 @@ public:
   typedef itk::SmartPointer<Self>  Pointer;
   
   typedef itk::Transform<double, 2, 2>::ConstPointer TransformCPtr;
+  
   itkNewMacro( Self );
   itkSetMacro(infile, char*);
   itkSetMacro(outfile, char*);

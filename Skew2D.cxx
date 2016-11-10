@@ -205,7 +205,9 @@ int main( int argc, char *argv[] )
   /*end copypasta*/
   
   CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
-  
+  observer->Setinfile(argv[2]);
+  observer->Setoutfile(argv[3]);
+  observer->Settransform_ptr(registration->GetTransform());
   optimizer->AddObserver( itk::IterationEvent(), observer );
   
   try
