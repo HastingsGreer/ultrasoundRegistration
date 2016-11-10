@@ -204,10 +204,10 @@ int main( int argc, char *argv[] )
   optimizer->SetLowerBound( lowerBound );
   /*end copypasta*/
   
-  CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
-  observer->Setinfile(argv[2]);
-  observer->Setoutfile(argv[3]);
-  observer->Settransform_ptr(registration->GetTransform());
+  CommandIterationUpdate<RegistrationType>::Pointer observer = CommandIterationUpdate<RegistrationType>::New();
+  observer->SetInfile(argv[2]);
+  observer->SetOutfile(argv[3]);
+  observer->SetRegistration(registration);
   optimizer->AddObserver( itk::IterationEvent(), observer );
   
   try

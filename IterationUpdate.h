@@ -20,7 +20,7 @@
 
 #include "itkCommand.h"
 
-
+template<typename RegistrationType>
 class CommandIterationUpdate : public itk::Command
 {
 public:
@@ -29,12 +29,10 @@ public:
   typedef  itk::Command             Superclass;
   typedef itk::SmartPointer<Self>  Pointer;
   
-  typedef itk::Transform<double, 2, 2>::ConstPointer TransformCPtr;
-  
   itkNewMacro( Self );
-  itkSetMacro(infile, char*);
-  itkSetMacro(outfile, char*);
-  itkSetMacro(transform_ptr, TransformCPtr);
+  itkSetMacro(Infile, char*);
+  itkSetMacro(Outfile, char*);
+  itkSetMacro(Registration, typename RegistrationType::Pointer);
   
 protected:
   CommandIterationUpdate() {};
@@ -61,13 +59,13 @@ public:
     std::cout << optimizer->GetValue() << " : ";
     std::cout << optimizer->GetCurrentPosition() << std::endl;
     //std::cout << optimizer->GetTransform() << std::endl;
-    printTransform(this->m_infile, this->m_outfile, this->m_transform_ptr);
+    printTransform(this->m_Infile, this->m_Outfile, this->m_Registration->GetTransform());
     
     }
 private: 
-  TransformCPtr m_transform_ptr;
-  const char * m_infile;
-  const char * m_outfile;
+  typename RegistrationType::Pointer m_Registration;
+  const char * m_Infile;
+  const char * m_Outfile;
 
 };
 #endif
