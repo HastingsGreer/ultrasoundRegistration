@@ -32,8 +32,6 @@ void printTransform(const char * inputFilename, const char * outputFilename, itk
   ImageType::Pointer image = imageReader->GetOutput();
   resample->SetInput(image);
 
-  
-
   resample->SetSize(    image->GetLargestPossibleRegion().GetSize() );
   resample->SetOutputOrigin(  image->GetOrigin() );
   resample->SetOutputSpacing( image->GetSpacing() );
@@ -56,7 +54,6 @@ void printTransform(const char * inputFilename, const char * outputFilename, itk
 
   WriterType::Pointer      writer =  WriterType::New();
   CastFilterType::Pointer  caster =  CastFilterType::New();
-
 
   writer->SetFileName( outputFilename );
 

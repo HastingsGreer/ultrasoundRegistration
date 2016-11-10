@@ -37,44 +37,7 @@
 #include "itkCastImageFilter.h"
 
 #include "itkCommand.h"
-/*
-class CommandIterationUpdate : public itk::Command
-{
-public:
-  typedef  CommandIterationUpdate   Self;
-  typedef  itk::Command             Superclass;
-  typedef itk::SmartPointer<Self>  Pointer;
-  itkNewMacro( Self );
-protected:
-  CommandIterationUpdate() {};
-public:
-  typedef itk::LBFGSBOptimizerv4 OptimizerType;
-  typedef const OptimizerType *                              OptimizerPointer;
-  void Execute(itk::Object *caller,
-               const itk::EventObject & event) ITK_OVERRIDE
-    {
-    Execute( (const itk::Object *)caller, event);
-    }
-  void Execute(const itk::Object * object,
-               const itk::EventObject & event) ITK_OVERRIDE
-    {
-    
-    OptimizerPointer optimizer =
-                         static_cast< OptimizerPointer >( object );
-    
-    if( ! itk::IterationEvent().CheckEvent( &event ) )
-      {
-      return;
-      }
-    std::cout << optimizer->GetCurrentIteration() << " = ";
-    std::cout << optimizer->GetValue() << " : ";
-    std::cout << optimizer->GetCurrentPosition() << std::endl;
-    //std::cout << optimizer->GetTransform() << std::endl;
-    
-    }
 
-};
-*/
 
 itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(){
   const    unsigned int    Dimension = 2;
@@ -82,18 +45,11 @@ itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(){
   typedef itk::Rigid2DTransform<double>              RigidType;
   typedef SkewTransform<double, 2>                   SkewType;
 
-
-
   CompositeType::Pointer initialTransform = CompositeType::New();
   SkewType::Pointer skA = SkewType::New();
   skA->SetIdentity();
   SkewType::Pointer skB = SkewType::New();
   skB->SetIdentity();
-/*  TransformType::ParametersType p;
-  p.SetSize(2);
-  p[0] = 0;
-  p[1] = 0.7;
-  initialTransform->SetParameters(p); */
   
   SkewType::FixedParametersType fp;
   fp.SetSize(2);
@@ -180,19 +136,8 @@ int main( int argc, char *argv[] )
   registration->SetMovingImage(   movingImageReader->GetOutput()   );
 
   // Set parameters of the optimizer
-  //
-  //optimizer->SetLearningRate( 1 );
-  //optimizer->SetMinimumStepLength( 0.001 );
-  //optimizer->SetRelaxationFactor( 0.75 );
+  
   optimizer->SetNumberOfIterations( 400 );
-  //typedef itk::RegistrationParameterScalesFromPhysicalShift < MetricType > RegistrationParameterScalesType; 
-  
-  //RegistrationParameterScalesType::Pointer shiftScaleEstimator =  RegistrationParameterScalesType::New();
-  //shiftScaleEstimator->SetMetric(metric);
-  
-  
-  //optimizer->SetScalesEstimator(shiftScaleEstimator);
-  //optimizer->SetMaximumStepSizeInPhysicalUnits(.03);
   
   registration->SetInitialTransform(makeInitialTransform());
  
@@ -207,17 +152,6 @@ int main( int argc, char *argv[] )
   registration->SetNumberOfLevels ( numberOfLevels );
   registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
 
-  
-  // Lock transform to only optimize skew
-  /*
-  RegistrationType::OptimizerWeightsType weights(6);
-  weights.Fill(0);
-  weights[1] = 1;
-  weights[4] = 1;
-  std::cout << weights << std::endl;
-  registration->SetOptimizerWeights(weights);
-  */
-  
   /* copied from example 12*/
   const unsigned int numParameters = 4;
   OptimizerType::BoundSelectionType boundSelect( numParameters );

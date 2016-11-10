@@ -16,45 +16,6 @@
  *
  *=========================================================================*/
 
-// Software Guide : BeginLatex
-//
-// Given the numerous parameters involved in tuning a registration method for
-// a particular application, it is not uncommon for a registration process to
-// run for several minutes and still produce a useless result.  To avoid
-// this situation it is quite helpful to track the evolution of the
-// registration as it progresses. The following section illustrates the
-// mechanisms provided in ITK for monitoring the activity of the
-// ImageRegistrationMethodv4 class.
-//
-// Insight implements the \emph{Observer/Command} design pattern
-// \cite{Gamma1995}.
-// The classes involved in this implementation are the \doxygen{Object},
-// \doxygen{Command} and \doxygen{EventObject} classes. The Object
-// is the base class of most ITK objects. This class maintains a linked
-// list of pointers to event observers. The role of observers is played by
-// the Command class.  Observers register themselves with an
-// Object, declaring that they are interested in receiving
-// notification when a particular event happens. A set of events is
-// represented by the hierarchy of the Event class. Typical events
-// are \code{Start}, \code{End}, \code{Progress} and \code{Iteration}.
-//
-// Registration is controlled by an \doxygen{Optimizer}, which generally
-// executes an iterative process. Most Optimizer classes invoke an
-// \doxygen{IterationEvent} at the end of each iteration. When an event is
-// invoked by an object, this object goes through its list of registered
-// observers (Commands) and checks whether any one of them has expressed
-// interest in the current event type. Whenever such an observer is found,
-// its corresponding \code{Execute()} method is invoked.  In this context,
-// \code{Execute()} methods should be considered \emph{callbacks}.  As such,
-// some of the common sense rules of callbacks should be respected.  For
-// example, \code{Execute()} methods should not perform heavy computational
-// tasks.  They are expected to execute rapidly, for example, printing out a
-// message or updating a value in a GUI.
-//
-// \index{itk::ImageRegistrationMethod!Monitoring}
-//
-//
-// Software Guide : EndLatex
 
 #include "SkewTransform.h"
 #include "PrintTransform.h"
@@ -135,31 +96,9 @@ int main( int argc, char *argv[] )
   registration->SetFixedImage(    fixedImageReader->GetOutput()    );
   registration->SetMovingImage(   movingImageReader->GetOutput()   );
 
-  // Set parameters of the optimizer
-  //
-  //optimizer->SetLearningRate( 1 );
-  //optimizer->SetMinimumStepLength( 0.001 );
-  //optimizer->SetRelaxationFactor( 0.75 );
-  //optimizer->SetNumberOfIterations( 400 );
-  //typedef itk::RegistrationParameterScalesFromPhysicalShift < MetricType > RegistrationParameterScalesType; 
-  
-  //RegistrationParameterScalesType::Pointer shiftScaleEstimator =  RegistrationParameterScalesType::New();
-  //shiftScaleEstimator->SetMetric(metric);
-  
-  
-  //optimizer->SetScalesEstimator(shiftScaleEstimator);
-  //optimizer->SetMaximumStepSizeInPhysicalUnits(.03);
-  
-  // Initialize the transform
   
   TransformType::Pointer initialTransform = TransformType::New();
   initialTransform->SetIdentity();
-  
-/*  TransformType::ParametersType p;
-  p.SetSize(2);
-  p[0] = 0;
-  p[1] = 0.7;
-  initialTransform->SetParameters(p); */
   
   TransformType::FixedParametersType fp;
   fp.SetSize(2);
@@ -179,17 +118,6 @@ int main( int argc, char *argv[] )
 
   registration->SetNumberOfLevels ( numberOfLevels );
   registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
-
-  
-  // Lock transform to only optimize skew
-  /*
-  RegistrationType::OptimizerWeightsType weights(6);
-  weights.Fill(0);
-  weights[1] = 1;
-  weights[4] = 1;
-  std::cout << weights << std::endl;
-  registration->SetOptimizerWeights(weights);
-  */
   
   /* copied from example 12*/
   const unsigned int numParameters = 2;

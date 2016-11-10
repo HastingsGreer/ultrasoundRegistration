@@ -58,7 +58,6 @@ public:
     std::cout << optimizer->GetCurrentIteration() << " = ";
     std::cout << optimizer->GetValue() << " : ";
     std::cout << optimizer->GetCurrentPosition() << std::endl;
-    //std::cout << optimizer->GetTransform() << std::endl;
     printTransform(this->m_Infile, this->m_Outfile, this->m_Registration->GetTransform());
     
     }
