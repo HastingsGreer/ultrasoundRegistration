@@ -59,6 +59,8 @@
 #include "SkewTransform.h"
 #include "PrintTransform.h"
 
+#include "IterationUpdate.h"
+
 #include "itkImageRegistrationMethodv4.h"
 #include "itkTranslationTransform.h"
 #include "itkMeanSquaresImageToImageMetricv4.h"
@@ -75,42 +77,10 @@
 #include "itkCastImageFilter.h"
 
 #include "itkCommand.h"
-class CommandIterationUpdate : public itk::Command
-{
-public:
-  typedef  CommandIterationUpdate   Self;
-  typedef  itk::Command             Superclass;
-  typedef itk::SmartPointer<Self>  Pointer;
-  itkNewMacro( Self );
-protected:
-  CommandIterationUpdate() {};
-public:
-  typedef itk::LBFGSBOptimizerv4 OptimizerType;
-  typedef const OptimizerType *                              OptimizerPointer;
-  void Execute(itk::Object *caller,
-               const itk::EventObject & event) ITK_OVERRIDE
-    {
-    Execute( (const itk::Object *)caller, event);
-    }
-  void Execute(const itk::Object * object,
-               const itk::EventObject & event) ITK_OVERRIDE
-    {
-    
-    OptimizerPointer optimizer =
-                         static_cast< OptimizerPointer >( object );
-    
-    if( ! itk::IterationEvent().CheckEvent( &event ) )
-      {
-      return;
-      }
-    std::cout << optimizer->GetCurrentIteration() << " = ";
-    std::cout << optimizer->GetValue() << " : ";
-    std::cout << optimizer->GetCurrentPosition() << std::endl;
-    //std::cout << optimizer->GetTransform() << std::endl;
-    
-    }
 
-};
+
+
+
 
 
 int main( int argc, char *argv[] )
@@ -123,7 +93,8 @@ int main( int argc, char *argv[] )
     std::cerr << "outputImagefile " << std::endl;
     return EXIT_FAILURE;
     }
-
+  
+  
   const    unsigned int    Dimension = 2;
   typedef  float           PixelType;
 
