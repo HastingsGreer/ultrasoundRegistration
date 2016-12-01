@@ -44,6 +44,7 @@ itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(){
   typedef itk::CompositeTransform<double, Dimension> CompositeType;
   typedef itk::Rigid2DTransform<double>              RigidType;
   typedef SkewTransform<double, 2>                   SkewType;
+  typedef itk::TranslationTransform<double, 2>       TranslationType;
 
   CompositeType::Pointer initialTransform = CompositeType::New();
   SkewType::Pointer skA = SkewType::New();
@@ -70,16 +71,24 @@ itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(){
   RigidType::ParametersType Rp;
   Rp.SetSize(3);
   Rp[0] = -3.1415 / 2;
-  Rp[1] = 0;
-  Rp[1] = 0;
+  Rp[1] = 20;
+  Rp[2] = 20;
   
   
   R->SetParameters(Rp);
   
+  TranslationType::Pointer T = TranslationType::New();
+  T->SetIdentity();
+  initialTransform->AddTransform(T);
   initialTransform->AddTransform(skA);
   initialTransform->AddTransform(R);
   initialTransform->AddTransform(skB);
-  initialTransform->SetNthTransformToOptimizeOff(1);
+
+
+
+  //initialTransform->SetNthTransformToOptimizeOff(1);
+  initialTransform->SetNthTransformToOptimizeOff(2);
+  //initialTransform->SetNthTransformToOptimizeOff(3);
   
   return initialTransform;
 }
@@ -153,13 +162,24 @@ int main( int argc, char *argv[] )
   registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
 
   /* copied from example 12*/
-  const unsigned int numParameters = 4;
+  const unsigned int numParameters = 9;
   OptimizerType::BoundSelectionType boundSelect( numParameters );
   OptimizerType::BoundValueType upperBound( numParameters );
   OptimizerType::BoundValueType lowerBound( numParameters );
-  boundSelect.Fill( 0 );
-  upperBound.Fill( 2 );
-  lowerBound.Fill( -2 );
+  boundSelect.Fill(2 );
+  upperBound[0] = .2;
+  upperBound[1] = 1;
+  upperBound[2] = .2;
+  upperBound[3] = 1;
+  upperBound[4] = 3;
+  upperBound[5] = 3;
+  lowerBound[0] = -.2;
+  lowerBound[1] = 1;
+  lowerBound[2] = -.2;
+  lowerBound[3] =1;
+  lowerBound[4] = -3;
+  lowerBound[5] = -3;
+
   optimizer->SetBoundSelection( boundSelect );
   optimizer->SetUpperBound( upperBound );
   optimizer->SetLowerBound( lowerBound );

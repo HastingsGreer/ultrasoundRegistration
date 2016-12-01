@@ -9,7 +9,7 @@
 #include "itkResampleImageFilter.h"
 #include "itkCastImageFilter.h"
 
-void printTransform(const char * inputFilename, const char * outputFilename, itk::Transform<double, 2, 2>::ConstPointer transform)
+void printTransform(const char * inputFilename, const char * outputFilename, const itk::Transform<double, 2, 2> * transform)
 {
   const    unsigned int    Dimension = 2;
   typedef  float           PixelType;
