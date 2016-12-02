@@ -4,19 +4,19 @@
 
 int main( int argc, char *argv[] )
 {
-  typedef SkewTransform< double, 2 > TransformType;
+  typedef itk::AngleSkewTransform< double, 2 > TransformType;
   
   TransformType::Pointer trans = TransformType::New();
   
   TransformType::ParametersType param;
   
   param.SetSize(3);
-  param[0] = 10   ;
+  param[0] = 3.14/4   ;
   param[1] = 1;
   param[2] = 0;
-  trans->SetFixedParameters(param);
+  trans->SetParameters(param);
   
   
   
-  printTransform("GroundTruthCat.jpg", "outAngle.png", trans.GetPointer());
+  printTransform("GroundTruthCat.jpg", "outAngle.png", trans->GetInverseTransform());
 }

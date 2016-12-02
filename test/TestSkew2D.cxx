@@ -1,60 +1,24 @@
 /*=========================================================================
- *
- *  Copyright Insight Software Consortium
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0.txt
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
- *=========================================================================*/
 
-// Software Guide : BeginLatex
-//
-// Given the numerous parameters involved in tuning a registration method for
-// a particular application, it is not uncommon for a registration process to
-// run for several minutes and still produce a useless result.  To avoid
-// this situation it is quite helpful to track the evolution of the
-// registration as it progresses. The following section illustrates the
-// mechanisms provided in ITK for monitoring the activity of the
-// ImageRegistrationMethodv4 class.
-//
-// Insight implements the \emph{Observer/Command} design pattern
-// \cite{Gamma1995}.
-// The classes involved in this implementation are the \doxygen{Object},
-// \doxygen{Command} and \doxygen{EventObject} classes. The Object
-// is the base class of most ITK objects. This class maintains a linked
-// list of pointers to event observers. The role of observers is played by
-// the Command class.  Observers register themselves with an
-// Object, declaring that they are interested in receiving
-// notification when a particular event happens. A set of events is
-// represented by the hierarchy of the Event class. Typical events
-// are \code{Start}, \code{End}, \code{Progress} and \code{Iteration}.
-//
-// Registration is controlled by an \doxygen{Optimizer}, which generally
-// executes an iterative process. Most Optimizer classes invoke an
-// \doxygen{IterationEvent} at the end of each iteration. When an event is
-// invoked by an object, this object goes through its list of registered
-// observers (Commands) and checks whether any one of them has expressed
-// interest in the current event type. Whenever such an observer is found,
-// its corresponding \code{Execute()} method is invoked.  In this context,
-// \code{Execute()} methods should be considered \emph{callbacks}.  As such,
-// some of the common sense rules of callbacks should be respected.  For
-// example, \code{Execute()} methods should not perform heavy computational
-// tasks.  They are expected to execute rapidly, for example, printing out a
-// message or updating a value in a GUI.
-//
-// \index{itk::ImageRegistrationMethod!Monitoring}
-//
-//
-// Software Guide : EndLatex
+Library:   MultipassUltrasound
+
+Copyright 2010 Kitware Inc. 28 Corporate Drive,
+Clifton Park, NY, 12065, USA.
+All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+=========================================================================*/
 
 #include "SkewTransform.h"
 
@@ -129,7 +93,7 @@ int main( int argc, char *argv[] )
   typedef itk::Image< PixelType, Dimension >  FixedImageType;
   typedef itk::Image< PixelType, Dimension >  MovingImageType;
 
-  typedef SkewTransform< double, Dimension >      TransformType;
+  typedef itk::SkewTransform< double, Dimension >  TransformType;
 
   typedef itk::LBFGSBOptimizerv4 OptimizerType;
 
