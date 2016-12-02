@@ -20,7 +20,7 @@ limitations under the License.
 
 =========================================================================*/
 
-#include "AngleSkewTransform.h"
+#include "AngleSkewInvTransform.h"
 #include "PrintTransform.h"
 
 #include "IterationUpdate.h"
@@ -60,7 +60,7 @@ int main( int argc, char *argv[] )
   typedef itk::Image< PixelType, Dimension >  FixedImageType;
   typedef itk::Image< PixelType, Dimension >  MovingImageType;
 
-  typedef itk::AngleSkewTransform< double, Dimension >      TransformType;
+  typedef itk::AngleSkewInvTransform< double, Dimension >      TransformType;
 
   typedef itk::LBFGSBOptimizerv4 OptimizerType;
 
