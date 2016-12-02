@@ -10,10 +10,9 @@ int main( int argc, char *argv[] )
   
   TransformType::ParametersType param;
   
-  param.SetSize(3);
-  param[0] = 3.14/4   ;
+  param.SetSize(2);
+  param[0] = .000000000000001   ;
   param[1] = 1;
-  param[2] = 0;
   trans->SetParameters(param);
   
   

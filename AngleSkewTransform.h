@@ -94,7 +94,6 @@ public:
 
   /** Get the parameters that uniquely define the transform
    * This is typically used by optimizers.
-   * The parameters form the right column of the transform matrix
    *
    * \sa Transform::GetParameters()
    * \sa Transform::GetFixedParameters() */
