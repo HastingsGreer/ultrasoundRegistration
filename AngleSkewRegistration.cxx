@@ -20,6 +20,7 @@ limitations under the License.
 
 =========================================================================*/
 
+#include "AngleSkewTransform.h"
 #include "AngleSkewInvTransform.h"
 #include "PrintTransform.h"
 
@@ -100,7 +101,7 @@ int main( int argc, char *argv[] )
   
   TransformType::FixedParametersType fp;
   fp.SetSize(2);
-  fp[0] = 31.6;
+  fp[0] = 27;
   fp[1] = 0;
   initialTransform->SetFixedParameters(fp);
   
@@ -125,10 +126,10 @@ int main( int argc, char *argv[] )
   OptimizerType::BoundSelectionType boundSelect( numParameters );
   OptimizerType::BoundValueType upperBound( numParameters );
   OptimizerType::BoundValueType lowerBound( numParameters );
-  boundSelect.Fill( 0 );
+  boundSelect.Fill( 2 ); //2 is a flag for "respect bounds"
   upperBound[0] = 3.14 / 3;
   upperBound[1] = 1.1;
-  lowerBound[0] = 3.14 / 6;
+  lowerBound[0] = -3.14 / 3;
   lowerBound[1] = .9;
   optimizer->SetBoundSelection( boundSelect );
   optimizer->SetUpperBound( upperBound );

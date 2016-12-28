@@ -86,9 +86,7 @@ AngleSkewInvTransform<TParametersValueType, NDimensions>
   matrix[0][1] = 0;
   matrix[1][0] = -tan(parameters[0]) / parameters[1];
   matrix[1][1] = 1/parameters[1];
-  //this->matrixMTime.Modified();
   this->SetMatrix(matrix);
-  //std::cout << this->GetMatrix() << std::endl;
   this->Modified();
 }
 
