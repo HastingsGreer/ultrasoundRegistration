@@ -52,7 +52,7 @@ int main( int argc, char *argv[] )
     std::cerr << "Missing Parameters " << std::endl;
     std::cerr << "Usage: " << argv[0];
     std::cerr << " fixedImageFile  movingImageFile ";
-    std::cerr << "outputImagefile " << std::endl;
+    std::cerr << "outputImagefile fixedVolumeFile movingVolumeFile" << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -178,7 +178,7 @@ int main( int argc, char *argv[] )
   std::cout << "Scale along Y  = " << YScale << std::endl;
   std::cout << "Optimal metric value = " << bestValue << std::endl;
   
-  printTransform(argv[2], argv[3], registration->GetTransform());
+  printTransform<2>(argv[2], argv[3], registration->GetTransform());
 
   return EXIT_SUCCESS;
 }

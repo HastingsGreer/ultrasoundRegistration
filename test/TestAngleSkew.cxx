@@ -20,5 +20,5 @@ int main( int argc, char *argv[] )
   
   
   
-  printTransform("GroundTruthCat.jpg", "outAngle.png", trans->GetInverseTransform());
+  printTransform<2>("GroundTruthCat.jpg", "outAngle.png", trans->GetInverseTransform());
 }

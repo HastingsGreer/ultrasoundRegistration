@@ -24,8 +24,9 @@ limitations under the License.
 #define PrintTransform_h
 
 #include "itkTransform.h"
+template <unsigned int NDimensions>
+void printTransform(const char * inputFilename, const char * outputFilename, const itk::Transform<double, NDimensions, NDimensions> * transform);
 
-void printTransform(const char * inputFilename, const char * outputFilename, const itk::Transform<double, 2, 2> * transform);
-
+#include "PrintTransform.hxx"
 
 #endif

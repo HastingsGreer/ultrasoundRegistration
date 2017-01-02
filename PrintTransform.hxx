@@ -30,16 +30,16 @@ limitations under the License.
 
 #include "itkResampleImageFilter.h"
 #include "itkCastImageFilter.h"
-
-void printTransform(const char * inputFilename, const char * outputFilename, const itk::Transform<double, 2, 2> * transform)
+template <unsigned int NDimensions>
+void printTransform(const char * inputFilename, const char * outputFilename, const itk::Transform<double, NDimensions, NDimensions> * transform)
 {
-  const    unsigned int    Dimension = 2;
+  const    unsigned int    Dimension = NDimensions;
   typedef  float           PixelType;
 
   typedef itk::Image< PixelType, Dimension > ImageType;
   typedef itk::ImageFileReader< ImageType  > ImageReaderType;
   
-  ImageReaderType::Pointer  imageReader  = ImageReaderType::New();
+  typename ImageReaderType::Pointer  imageReader  = ImageReaderType::New();
 
   imageReader->SetFileName(inputFilename);
   imageReader->Update();
@@ -48,10 +48,10 @@ void printTransform(const char * inputFilename, const char * outputFilename, con
                             ImageType,
                             ImageType >    ResampleFilterType;
 
-  ResampleFilterType::Pointer resample = ResampleFilterType::New();
+  typename ResampleFilterType::Pointer resample = ResampleFilterType::New();
 
   resample->SetTransform(transform);
-  ImageType::Pointer image = imageReader->GetOutput();
+  typename ImageType::Pointer image = imageReader->GetOutput();
   resample->SetInput(image);
 
   resample->SetSize(    image->GetLargestPossibleRegion().GetSize() );
@@ -74,8 +74,8 @@ void printTransform(const char * inputFilename, const char * outputFilename, con
 
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
 
-  WriterType::Pointer      writer =  WriterType::New();
-  CastFilterType::Pointer  caster =  CastFilterType::New();
+  typename WriterType::Pointer      writer =  WriterType::New();
+  typename CastFilterType::Pointer  caster =  CastFilterType::New();
 
   writer->SetFileName( outputFilename );
 
@@ -83,5 +83,7 @@ void printTransform(const char * inputFilename, const char * outputFilename, con
   writer->SetInput( caster->GetOutput()   );
   writer->Update();
 }
+
+
 
 #endif

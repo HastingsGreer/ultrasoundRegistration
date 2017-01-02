@@ -31,6 +31,6 @@ target_link_libraries(TestSkew2D ${ITK_LIBRARIES})
 add_test(TestSimpleRegistration TestSkew2D GroundTruthCat.jpg SkewedeCat2.jpg out.png)
 
 add_executable(TestAngleSkew TestAngleSkew.cxx)
-target_link_libraries(TestAngleSkew PrintTransform ${ITK_LIBRARIES})
+target_link_libraries(TestAngleSkew ${ITK_LIBRARIES})
 
 add_test(TestAngleSkew_ TestAngleSkew)

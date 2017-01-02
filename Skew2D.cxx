@@ -172,7 +172,7 @@ int main( int argc, char *argv[] )
   std::cout << "Translation along Y  = " << TranslationAlongY << std::endl;
   std::cout << "Optimal metric value = " << bestValue << std::endl;
   
-  printTransform(argv[2], argv[3], registration->GetTransform());
+  printTransform<2>(argv[2], argv[3], registration->GetTransform());
 
   return EXIT_SUCCESS;
 }
