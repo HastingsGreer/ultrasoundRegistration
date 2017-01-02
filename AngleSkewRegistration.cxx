@@ -43,6 +43,8 @@ limitations under the License.
 
 #include "itkCommand.h"
 
+#include "itkRGBPixel.h"
+
 int main( int argc, char *argv[] )
 {
   if( argc < 4 )
@@ -56,7 +58,7 @@ int main( int argc, char *argv[] )
   
   
   const    unsigned int    Dimension = 2;
-  typedef  float           PixelType;
+  typedef   double   PixelType;
 
   typedef itk::Image< PixelType, Dimension >  FixedImageType;
   typedef itk::Image< PixelType, Dimension >  MovingImageType;
@@ -91,9 +93,13 @@ int main( int argc, char *argv[] )
 
   fixedImageReader->SetFileName(  argv[1] );
   movingImageReader->SetFileName( argv[2] );
-
-  registration->SetFixedImage(    fixedImageReader->GetOutput()    );
+  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
+  fixedImageReader->Update();
+  
+  registration->SetFixedImage(    fixedImage    );
   registration->SetMovingImage(   movingImageReader->GetOutput()   );
+  double width = fixedImage->GetLargestPossibleRegion().GetSize()[0];
+  std::cout << "width:" << width <<std::endl;
 
   
   TransformType::Pointer initialTransform = TransformType::New();
@@ -101,7 +107,7 @@ int main( int argc, char *argv[] )
   
   TransformType::FixedParametersType fp;
   fp.SetSize(2);
-  fp[0] = 27;
+  fp[0] = width/2;
   fp[1] = 0;
   initialTransform->SetFixedParameters(fp);
   
@@ -128,9 +134,9 @@ int main( int argc, char *argv[] )
   OptimizerType::BoundValueType lowerBound( numParameters );
   boundSelect.Fill( 2 ); //2 is a flag for "respect bounds"
   upperBound[0] = 3.14 / 3;
-  upperBound[1] = 1.1;
+  upperBound[1] = 1.5;
   lowerBound[0] = -3.14 / 3;
-  lowerBound[1] = .9;
+  lowerBound[1] = .75;
   optimizer->SetBoundSelection( boundSelect );
   optimizer->SetUpperBound( upperBound );
   optimizer->SetLowerBound( lowerBound );
