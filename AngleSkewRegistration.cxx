@@ -34,6 +34,7 @@ limitations under the License.
 
 #include "itkLBFGSBOptimizerv4.h"
 #include "itkAffineTransform.h"
+#include "itkCompositeTransform.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -44,6 +45,43 @@ limitations under the License.
 #include "itkCommand.h"
 
 #include "itkRGBPixel.h"
+
+itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(double width){
+  const    unsigned int    Dimension = 2;
+  typedef itk::CompositeTransform<double, Dimension> CompositeType;
+  typedef itk::AngleSkewInvTransform< double, Dimension >  MovingToRealType;
+  typedef itk::AngleSkewTransform< double, Dimension >  RealToFixedType;
+
+  CompositeType::Pointer initialTransform = CompositeType::New();
+  
+  MovingToRealType::Pointer A = MovingToRealType::New();
+  A->SetIdentity();
+  MovingToRealType::ParametersType pA;
+  pA.SetSize(2);
+  pA[0] = -3.14 / 6;
+  pA[1] = 2.0;
+  A->SetParameters(pA);
+  
+  RealToFixedType::Pointer B = RealToFixedType::New();
+  B->SetIdentity();
+  RealToFixedType::ParametersType pB;
+  pB.SetSize(2);
+  pB[0] = 3.14 / 6;
+  pB[1] = 2.0;
+  B->SetParameters(pB);
+  
+  MovingToRealType::FixedParametersType fp;
+  fp.SetSize(2);
+  fp[0] = width/2;
+  fp[1] = 0;
+  A->SetFixedParameters(fp);
+  B->SetFixedParameters(fp);
+  
+  initialTransform->AddTransform(A);
+  initialTransform->AddTransform(B);
+  
+  return initialTransform;
+}
 
 int main( int argc, char *argv[] )
 {
@@ -63,7 +101,7 @@ int main( int argc, char *argv[] )
   typedef itk::Image< PixelType, Dimension >  FixedImageType;
   typedef itk::Image< PixelType, Dimension >  MovingImageType;
 
-  typedef itk::AngleSkewInvTransform< double, Dimension >      TransformType;
+  typedef itk::CompositeTransform< double, Dimension >      TransformType;
 
   typedef itk::LBFGSBOptimizerv4 OptimizerType;
 
@@ -102,15 +140,7 @@ int main( int argc, char *argv[] )
   std::cout << "width:" << width <<std::endl;
 
   
-  TransformType::Pointer initialTransform = TransformType::New();
-  initialTransform->SetIdentity();
-  
-  TransformType::FixedParametersType fp;
-  fp.SetSize(2);
-  fp[0] = width/2;
-  fp[1] = 0;
-  initialTransform->SetFixedParameters(fp);
-  
+  TransformType::Pointer initialTransform = makeInitialTransform(width);
   std::cout << initialTransform->GetParameters() << std::endl;
   
   
@@ -128,15 +158,19 @@ int main( int argc, char *argv[] )
   registration->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
   
   /*bounds for the optimizer */
-  const unsigned int numParameters = 2;
+  const unsigned int numParameters = 4;
   OptimizerType::BoundSelectionType boundSelect( numParameters );
   OptimizerType::BoundValueType upperBound( numParameters );
   OptimizerType::BoundValueType lowerBound( numParameters );
   boundSelect.Fill( 2 ); //2 is a flag for "respect bounds"
   upperBound[0] = 3.14 / 3;
-  upperBound[1] = 1.5;
+  upperBound[1] = 2.5;
   lowerBound[0] = -3.14 / 3;
   lowerBound[1] = .75;
+  upperBound[2] = 3.14 / 3;
+  upperBound[3] = 2.5;
+  lowerBound[2] = -3.14 / 3;
+  lowerBound[3] = .75;
   optimizer->SetBoundSelection( boundSelect );
   optimizer->SetUpperBound( upperBound );
   optimizer->SetLowerBound( lowerBound );

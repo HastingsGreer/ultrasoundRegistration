@@ -35,3 +35,5 @@ add_executable(Coregistration Coregistration.cxx )
 target_link_libraries(Coregistration ${ITK_LIBRARIES})
 
 add_subdirectory(test)
+
+add_subdirectory(data)
