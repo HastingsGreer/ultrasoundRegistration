@@ -49,28 +49,28 @@ limitations under the License.
 itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(double width){
   const    unsigned int    Dimension = 2;
   typedef itk::CompositeTransform<double, Dimension> CompositeType;
-  typedef itk::AngleSkewInvTransform< double, Dimension >  MovingToRealType;
-  typedef itk::AngleSkewTransform< double, Dimension >  RealToFixedType;
+  typedef itk::AngleSkewInvTransform< double, Dimension >  RealToMovingType;
+  typedef itk::AngleSkewTransform< double, Dimension >  FixedToRealType;
 
   CompositeType::Pointer initialTransform = CompositeType::New();
   
-  MovingToRealType::Pointer A = MovingToRealType::New();
+  RealToMovingType::Pointer A = RealToMovingType::New();
   A->SetIdentity();
-  MovingToRealType::ParametersType pA;
+  RealToMovingType::ParametersType pA;
   pA.SetSize(2);
   pA[0] = -3.14 / 6;
   pA[1] = 2.0;
   A->SetParameters(pA);
   
-  RealToFixedType::Pointer B = RealToFixedType::New();
+  FixedToRealType::Pointer B = FixedToRealType::New();
   B->SetIdentity();
-  RealToFixedType::ParametersType pB;
+  FixedToRealType::ParametersType pB;
   pB.SetSize(2);
   pB[0] = 3.14 / 6;
   pB[1] = 2.0;
   B->SetParameters(pB);
   
-  MovingToRealType::FixedParametersType fp;
+  RealToMovingType::FixedParametersType fp;
   fp.SetSize(2);
   fp[0] = width/2;
   fp[1] = 0;
@@ -79,6 +79,8 @@ itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(double width){
   
   initialTransform->AddTransform(A);
   initialTransform->AddTransform(B);
+  
+  //Fixed(x)  $= Moving(A(B(x))
   
   return initialTransform;
 }
@@ -164,13 +166,13 @@ int main( int argc, char *argv[] )
   OptimizerType::BoundValueType lowerBound( numParameters );
   boundSelect.Fill( 2 ); //2 is a flag for "respect bounds"
   upperBound[0] = 3.14 / 3;
-  upperBound[1] = 2.5;
-  lowerBound[0] = -3.14 / 3;
-  lowerBound[1] = .75;
-  upperBound[2] = 3.14 / 3;
-  upperBound[3] = 2.5;
-  lowerBound[2] = -3.14 / 3;
-  lowerBound[3] = .75;
+  upperBound[1] = 4.5;
+  lowerBound[0] = 3.14 / 6;
+  lowerBound[1] = 1.5;
+  upperBound[2] = -3.14 / 4;
+  upperBound[3] = 4.5;
+  lowerBound[2] = -3.14 / 4;
+  lowerBound[3] = 1.5;
   optimizer->SetBoundSelection( boundSelect );
   optimizer->SetUpperBound( upperBound );
   optimizer->SetLowerBound( lowerBound );
@@ -213,6 +215,7 @@ int main( int argc, char *argv[] )
   std::cout << "Optimal metric value = " << bestValue << std::endl;
   
   printTransform<2>(argv[2], argv[3], registration->GetTransform());
+  //printTransform<2>(argv[2], "moving" + argv[3], registration->
 
   return EXIT_SUCCESS;
 }
