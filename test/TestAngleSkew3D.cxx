@@ -1,8 +1,8 @@
 #include "AngleSkewTransform.h"
 #include "AngleSkewInvTransform.h"
-
 #include "PrintTransform.h"
-#include "itkCompositeTransform.h"
+
+#include <itkCompositeTransform.h>
 
 int main( int argc, char *argv[] )
 {
@@ -26,9 +26,9 @@ int main( int argc, char *argv[] )
   */
   
   const    unsigned int    Dimension = 3;
-  typedef itk::CompositeTransform<double, Dimension> CompositeType;
+  typedef itk::CompositeTransform<double, Dimension>       CompositeType;
   typedef itk::AngleSkewInvTransform< double, Dimension >  MovingToRealType;
-  typedef itk::AngleSkewTransform< double, Dimension >  RealToFixedType;
+  typedef itk::AngleSkewTransform< double, Dimension >     RealToFixedType;
   float width = 800; //REMOVE ME 
   CompositeType::Pointer initialTransform = CompositeType::New();
   
@@ -58,8 +58,8 @@ int main( int argc, char *argv[] )
   initialTransform->AddTransform(A);
   initialTransform->AddTransform(B);
   
-  printTransform<3>("Dino1.bmp", "FixedDino1.png", B->GetInverseTransform());
-  printTransform<3>("Dino2.bmp", "MovingDino2.png", A);
-  printTransform<3>("Dino2.bmp", "Dino2OverlaidDino1.png", initialTransform);
+  printTransform<3>("Dino1Raw.mha", "FixedDino1.mha", B->GetInverseTransform());
+  printTransform<3>("Dino2Raw.mha", "MovingDino2.mha", A);
+  printTransform<3>("Dino2Raw.mha", "Dino2OverlaidDino1.mha", initialTransform);
   
 }
