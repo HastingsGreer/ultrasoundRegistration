@@ -1,3 +1,6 @@
 *.mha
+*.mhd
+*.raw
+
 *.bmp
 .ipynb_checkpoints/
