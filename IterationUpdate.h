@@ -52,9 +52,9 @@ public:
   typedef itk::SmartPointer<Self>  Pointer;
   
   itkNewMacro( Self );
-  itkSetMacro(Infile, char*);
-  itkSetMacro(Outfile, char*);
-  itkSetMacro(Registration, typename RegistrationType::Pointer);
+  itkSetMacro( Infile, char* );
+  itkSetMacro( Outfile, char* );
+  itkSetMacro( Registration, typename RegistrationType::Pointer );
   
 protected:
   CommandIterationUpdate() {};
@@ -80,7 +80,7 @@ public:
     std::cout << optimizer->GetCurrentIteration() << " = ";
     std::cout << optimizer->GetValue() << " : ";
     std::cout << optimizer->GetCurrentPosition() << std::endl;
-    printTransform(this->m_Infile, this->m_Outfile, this->m_Registration->GetTransform());
+    printTransform( this->m_Infile, this->m_Outfile, this->m_Registration->GetTransform() );
     
     }
 private: 

@@ -23,7 +23,8 @@ limitations under the License.
 #ifndef PrintTransform_h
 #define PrintTransform_h
 
-#include "itkTransform.h"
+#include <itkTransform.h>
+
 template <unsigned int NDimensions>
 void printTransform(const char * inputFilename, const char * outputFilename, const itk::Transform<double, NDimensions, NDimensions> * transform);
 

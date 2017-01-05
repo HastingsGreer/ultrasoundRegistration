@@ -33,7 +33,7 @@ template<
   unsigned int NDimensions>
 AngleSkewInvTransform<TParametersValueType, NDimensions>
 ::AngleSkewInvTransform() :
-  Superclass(NDimensions)
+  Superclass( NDimensions )
 {}
 
 template< 
@@ -55,7 +55,7 @@ AngleSkewInvTransform<TParametersValueType, NDimensions>
   double tanTheta = -matrix[1][0] / matrix[1][1];
   double sinTheta = tanTheta * cosTheta;
   
-  this->m_Parameters[0] = atan2(sinTheta, cosTheta);
+  this->m_Parameters[0] = atan2( sinTheta, cosTheta );
   this->m_Parameters[1] = 1 / matrix[1][1];
   return this->m_Parameters;
 }
@@ -65,7 +65,7 @@ template<
   unsigned int NDimensions>
 void 
 AngleSkewInvTransform<TParametersValueType, NDimensions>
-::SetParameters(const ParametersType & parameters)
+::SetParameters( const ParametersType & parameters )
 {
   if( parameters.Size() < 2)
   {
@@ -76,17 +76,17 @@ AngleSkewInvTransform<TParametersValueType, NDimensions>
        << " (" << NDimensions << ")"
       );
   }
-  if( &parameters != &(this->m_Parameters) )
+  if( &parameters != &( this->m_Parameters ) )
   {
     this->m_Parameters = parameters;
   }
   
   MatrixType matrix = this->GetMatrix();
-  matrix[0][0] = 1/cos(parameters[0]);
+  matrix[0][0] = 1/cos( parameters[0] );
   matrix[0][1] = 0;
-  matrix[1][0] = -tan(parameters[0]) / parameters[1];
+  matrix[1][0] = -tan( parameters[0] ) / parameters[1];
   matrix[1][1] = 1/parameters[1];
-  this->SetMatrix(matrix);
+  this->SetMatrix( matrix );
   this->Modified();
 }
 
@@ -95,16 +95,16 @@ template<
   unsigned int NDimensions>
 void 
 AngleSkewInvTransform<TParametersValueType, NDimensions>
-::ComputeJacobianWithRespectToParameters(const InputPointType  & p, JacobianType & jacobian) const
+::ComputeJacobianWithRespectToParameters( const InputPointType  & p, JacobianType & jacobian ) const
 {
   jacobian.SetSize( NDimensions, NDimensions );
-  jacobian.Fill(0.0);
-  double cosTheta = cos(this->m_Parameters[0]);
-  double tanTheta = tan(this->m_Parameters[0]);
+  jacobian.Fill( 0.0 );
+  double cosTheta = cos( this->m_Parameters[0] );
+  double tanTheta = tan( this->m_Parameters[0] );
   jacobian(0, 0) = tanTheta / cosTheta * p[0]; 
   jacobian(0, 1) = 0;
-  jacobian(1, 0) = -1 / (cosTheta * cosTheta * this->m_Parameters[1]) * p[0];
-  jacobian(1, 1) = -(-p[0] * tanTheta + p[1]) / (this->m_Parameters[1] * this->m_Parameters[1] );
+  jacobian(1, 0) = -1 / ( cosTheta * cosTheta * this->m_Parameters[1] ) * p[0];
+  jacobian(1, 1) = -( -p[0] * tanTheta + p[1] ) / ( this->m_Parameters[1] * this->m_Parameters[1] );
 
   //std::cout<< "jacobian:" << std::endl << jacobian << std::endl;
   

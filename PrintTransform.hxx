@@ -25,11 +25,12 @@ limitations under the License.
 
 #include "PrintTransform.h"
 
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
+#include <itkImageFileReader.h>
+#include <itkImageFileWriter.h>
 
-#include "itkResampleImageFilter.h"
-#include "itkCastImageFilter.h"
+#include <itkResampleImageFilter.h>
+#include <itkCastImageFilter.h>
+
 template <unsigned int NDimensions>
 void printTransform(const char * inputFilename, const char * outputFilename, const itk::Transform<double, NDimensions, NDimensions> * transform)
 {
@@ -41,21 +42,19 @@ void printTransform(const char * inputFilename, const char * outputFilename, con
   
   typename ImageReaderType::Pointer  imageReader  = ImageReaderType::New();
 
-  imageReader->SetFileName(inputFilename);
+  imageReader->SetFileName( inputFilename );
   imageReader->Update();
   
-  typedef itk::ResampleImageFilter<
-                            ImageType,
-                            ImageType >    ResampleFilterType;
+  typedef itk::ResampleImageFilter< ImageType, ImageType > ResampleFilterType;
 
   typename ResampleFilterType::Pointer resample = ResampleFilterType::New();
 
-  resample->SetTransform(transform);
+  resample->SetTransform( transform );
   typename ImageType::Pointer image = imageReader->GetOutput();
-  resample->SetInput(image);
+  resample->SetInput( image );
 
-  resample->SetSize(    image->GetLargestPossibleRegion().GetSize() );
-  resample->SetOutputOrigin(  image->GetOrigin() );
+  resample->SetSize( image->GetLargestPossibleRegion().GetSize() );
+  resample->SetOutputOrigin( image->GetOrigin() );
   resample->SetOutputSpacing( image->GetSpacing() );
   resample->SetOutputDirection( image->GetDirection() );
   resample->SetDefaultPixelValue( 100 );
@@ -64,15 +63,10 @@ void printTransform(const char * inputFilename, const char * outputFilename, con
   // Prepare a writer and caster filters to send the resampled moving image to
   // a file
   //
-  typedef  unsigned char  OutputPixelType;
-
-  typedef itk::Image< OutputPixelType, Dimension > OutputImageType;
-
-  typedef itk::CastImageFilter<
-                        ImageType,
-                        OutputImageType > CastFilterType;
-
-  typedef itk::ImageFileWriter< OutputImageType >  WriterType;
+  typedef unsigned char                                      OutputPixelType;
+  typedef itk::Image< OutputPixelType, Dimension >           OutputImageType;
+  typedef itk::CastImageFilter< ImageType, OutputImageType > CastFilterType;
+  typedef itk::ImageFileWriter< OutputImageType >            WriterType;
 
   typename WriterType::Pointer      writer =  WriterType::New();
   typename CastFilterType::Pointer  caster =  CastFilterType::New();

@@ -81,9 +81,9 @@ AngleSkewTransform<TParametersValueType, NDimensions>
   }
   
   MatrixType matrix = this->GetMatrix();
-  matrix[0][0] = cos(parameters[0]);
+  matrix[0][0] = cos( parameters[0] );
   matrix[0][1] = 0;
-  matrix[1][0] = sin(parameters[0]);
+  matrix[1][0] = sin( parameters[0] );
   matrix[1][1] = parameters[1];
   //this->matrixMTime.Modified();
   this->SetMatrix(matrix);
@@ -100,9 +100,9 @@ AngleSkewTransform<TParametersValueType, NDimensions>
 {
   jacobian.SetSize( NDimensions, NDimensions );
   jacobian.Fill(0.0);
-  jacobian(0, 0) = -sin(this->m_Parameters[0]) * p[0]; 
+  jacobian(0, 0) = -sin( this->m_Parameters[0] ) * p[0]; 
   jacobian(0, 1) = 0;
-  jacobian(1, 0) = cos(this->m_Parameters[0]) * p[0];
+  jacobian(1, 0) = cos (this->m_Parameters[0] ) * p[0];
   jacobian(1, 1) = p[1];
 
   //std::cout<< "jacobian:" << std::endl << jacobian << std::endl;

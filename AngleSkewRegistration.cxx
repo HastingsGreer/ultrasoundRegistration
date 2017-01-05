@@ -26,38 +26,36 @@ limitations under the License.
 
 #include "IterationUpdate.h"
 
-#include "itkImageRegistrationMethodv4.h"
-#include "itkTranslationTransform.h"
-#include "itkMeanSquaresImageToImageMetricv4.h"
-#include "itkGradientDescentOptimizerv4.h"
-#include "itkRegistrationParameterScalesFromPhysicalShift.h"
+#include <itkImageRegistrationMethodv4.h>
+#include <itkTranslationTransform.h>
+#include <itkMeanSquaresImageToImageMetricv4.h>
+#include <itkGradientDescentOptimizerv4.h>
+#include <itkRegistrationParameterScalesFromPhysicalShift.h>
+#include <itkLBFGSBOptimizerv4.h>
+#include <itkAffineTransform.h>
+#include <itkCompositeTransform.h>
 
-#include "itkLBFGSBOptimizerv4.h"
-#include "itkAffineTransform.h"
-#include "itkCompositeTransform.h"
+#include <itkImageFileReader.h> 
 
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
+#include <itkResampleImageFilter.h>
+#include <itkCastImageFilter.h>
 
-#include "itkResampleImageFilter.h"
-#include "itkCastImageFilter.h"
+#include <itkCommand.h>
 
-#include "itkCommand.h"
 
-#include "itkRGBPixel.h"
-
-itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(double width){
+itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(double width)
+{
   const    unsigned int    Dimension = 2;
-  typedef itk::CompositeTransform<double, Dimension> CompositeType;
+  typedef itk::CompositeTransform< double, Dimension >       CompositeType;
   typedef itk::AngleSkewInvTransform< double, Dimension >  RealToMovingType;
-  typedef itk::AngleSkewTransform< double, Dimension >  FixedToRealType;
+  typedef itk::AngleSkewTransform< double, Dimension >     FixedToRealType;
 
   CompositeType::Pointer initialTransform = CompositeType::New();
   
   RealToMovingType::Pointer A = RealToMovingType::New();
   A->SetIdentity();
   RealToMovingType::ParametersType pA;
-  pA.SetSize(2);
+  pA.SetSize( 2 );
   pA[0] = -3.14 / 6;
   pA[1] = 2.0;
   A->SetParameters(pA);
@@ -65,20 +63,20 @@ itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(double width){
   FixedToRealType::Pointer B = FixedToRealType::New();
   B->SetIdentity();
   FixedToRealType::ParametersType pB;
-  pB.SetSize(2);
+  pB.SetSize( 2 );
   pB[0] = 3.14 / 6;
   pB[1] = 2.0;
   B->SetParameters(pB);
   
   RealToMovingType::FixedParametersType fp;
-  fp.SetSize(2);
+  fp.SetSize( 2 );
   fp[0] = width/2;
   fp[1] = 0;
-  A->SetFixedParameters(fp);
-  B->SetFixedParameters(fp);
+  A->SetFixedParameters( fp );
+  B->SetFixedParameters( fp );
   
-  initialTransform->AddTransform(A);
-  initialTransform->AddTransform(B);
+  initialTransform->AddTransform( A );
+  initialTransform->AddTransform( B );
   
   //Fixed(x)  $= Moving(A(B(x))
   
@@ -92,61 +90,59 @@ int main( int argc, char *argv[] )
     std::cerr << "Missing Parameters " << std::endl;
     std::cerr << "Usage: " << argv[0];
     std::cerr << " fixedImageFile  movingImageFile ";
-    std::cerr << "outputImagefile fixedVolumeFile movingVolumeFile" << std::endl;
+    std::cerr << "outputImagefile fixedVolumeFile movingVolumeFile" 
+      << std::endl;
     return EXIT_FAILURE;
     }
   
   
   const    unsigned int    Dimension = 2;
-  typedef   double   PixelType;
+  typedef double                                             PixelType;
 
-  typedef itk::Image< PixelType, Dimension >  FixedImageType;
-  typedef itk::Image< PixelType, Dimension >  MovingImageType;
+  typedef itk::Image< PixelType, Dimension >                 FixedImageType;
+  typedef itk::Image< PixelType, Dimension >                 MovingImageType;
 
-  typedef itk::CompositeTransform< double, Dimension >      TransformType;
+  typedef itk::CompositeTransform< double, Dimension >       TransformType;
+  typedef itk::LBFGSBOptimizerv4                             OptimizerType;
+  typedef itk::ImageRegistrationMethodv4< FixedImageType,
+    MovingImageType, TransformType >                         RegistrationType;
 
-  typedef itk::LBFGSBOptimizerv4 OptimizerType;
-
-  typedef itk::ImageRegistrationMethodv4<
-                                    FixedImageType,
-                                    MovingImageType,
-                                    TransformType     >  RegistrationType;
-
-  typedef itk::MeanSquaresImageToImageMetricv4<
-                                      FixedImageType,
-                                      MovingImageType >  MetricType;
+  typedef itk::MeanSquaresImageToImageMetricv4< FixedImageType,
+    MovingImageType >                                        MetricType;
 
   OptimizerType::Pointer      optimizer     = OptimizerType::New();
   RegistrationType::Pointer   registration  = RegistrationType::New();
 
-  registration->SetOptimizer(     optimizer     );
+  registration->SetOptimizer( optimizer );
 
   MetricType::Pointer         metric        = MetricType::New();
 
-  registration->SetMetric( metric  );
+  registration->SetMetric( metric );
 
   typedef itk::ImageFileReader< FixedImageType  > FixedImageReaderType;
   typedef itk::ImageFileReader< MovingImageType > MovingImageReaderType;
 
-  FixedImageReaderType::Pointer  fixedImageReader  = FixedImageReaderType::New();
-  MovingImageReaderType::Pointer movingImageReader = MovingImageReaderType::New();
+  FixedImageReaderType::Pointer  fixedImageReader  = 
+    FixedImageReaderType::New();
+  MovingImageReaderType::Pointer movingImageReader = 
+    MovingImageReaderType::New();
 
   fixedImageReader->SetFileName(  argv[1] );
   movingImageReader->SetFileName( argv[2] );
   FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
   fixedImageReader->Update();
   
-  registration->SetFixedImage(    fixedImage    );
-  registration->SetMovingImage(   movingImageReader->GetOutput()   );
+  registration->SetFixedImage( fixedImage );
+  registration->SetMovingImage( movingImageReader->GetOutput() );
   double width = fixedImage->GetLargestPossibleRegion().GetSize()[0];
   std::cout << "width:" << width <<std::endl;
 
   
-  TransformType::Pointer initialTransform = makeInitialTransform(width);
+  TransformType::Pointer initialTransform = makeInitialTransform( width );
   std::cout << initialTransform->GetParameters() << std::endl;
   
   
-  registration->SetInitialTransform(initialTransform);
+  registration->SetInitialTransform( initialTransform );
   
  // One level registration process without shrinking and smoothing.
   //
@@ -178,10 +174,11 @@ int main( int argc, char *argv[] )
   optimizer->SetLowerBound( lowerBound );
   
   
-  CommandIterationUpdate<RegistrationType>::Pointer observer = CommandIterationUpdate<RegistrationType>::New();
-  observer->SetInfile(argv[2]);
-  observer->SetOutfile(argv[3]);
-  observer->SetRegistration(registration);
+  CommandIterationUpdate< RegistrationType >::Pointer observer = 
+    CommandIterationUpdate< RegistrationType >::New();
+  observer->SetInfile( argv[2] );
+  observer->SetOutfile( argv[3] );
+  observer->SetRegistration( registration );
   optimizer->AddObserver( itk::IterationEvent(), observer );
   
   try
@@ -214,7 +211,7 @@ int main( int argc, char *argv[] )
   std::cout << "Scale along Y  = " << YScale << std::endl;
   std::cout << "Optimal metric value = " << bestValue << std::endl;
   
-  printTransform<2>(argv[2], argv[3], registration->GetTransform());
+  printTransform<2>( argv[2], argv[3], registration->GetTransform() );
   //printTransform<2>(argv[2], "moving" + argv[3], registration->
 
   return EXIT_SUCCESS;
