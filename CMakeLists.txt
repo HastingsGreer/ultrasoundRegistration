@@ -25,14 +25,8 @@ project(ITKv4ImageRegistration)
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 
-add_executable(Skew2D Skew2D.cxx )
-target_link_libraries(Skew2D ${ITK_LIBRARIES})
-
 add_executable(AngleSkewRegistration AngleSkewRegistration.cxx )
 target_link_libraries(AngleSkewRegistration ${ITK_LIBRARIES})
-
-add_executable(Coregistration Coregistration.cxx )
-target_link_libraries(Coregistration ${ITK_LIBRARIES})
 
 add_subdirectory(test)
 
