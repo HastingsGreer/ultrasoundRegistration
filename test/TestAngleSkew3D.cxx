@@ -58,8 +58,8 @@ int main( int argc, char *argv[] )
   initialTransform->AddTransform(A);
   initialTransform->AddTransform(B);
   
-  printTransform<2>("Dino1.bmp", "FixedDino1.png", B->GetInverseTransform());
-  printTransform<2>("Dino2.bmp", "MovingDino2.png", A);
-  printTransform<2>("Dino2.bmp", "Dino2OverlaidDino1.png", initialTransform);
+  printTransform<3>("Dino1.bmp", "FixedDino1.png", B->GetInverseTransform());
+  printTransform<3>("Dino2.bmp", "MovingDino2.png", A);
+  printTransform<3>("Dino2.bmp", "Dino2OverlaidDino1.png", initialTransform);
   
 }
