@@ -25,6 +25,8 @@ limitations under the License.
 #include "PrintTransform.h"
 
 #include "IterationUpdate.h"
+#include "ConvertTransform.h"
+
 
 #include <itkImageRegistrationMethodv4.h>
 #include <itkTranslationTransform.h>
@@ -43,9 +45,9 @@ limitations under the License.
 #include <itkCommand.h>
 
 
-itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(double width)
+itk::CompositeTransform<double, 3>::Pointer makeInitialTransform(double width)
 {
-  const    unsigned int    Dimension = 2;
+  const    unsigned int    Dimension = 3;
   typedef itk::CompositeTransform< double, Dimension >       CompositeType;
   typedef itk::AngleSkewInvTransform< double, Dimension >  RealToMovingType;
   typedef itk::AngleSkewTransform< double, Dimension >     FixedToRealType;
@@ -69,9 +71,10 @@ itk::CompositeTransform<double, 2>::Pointer makeInitialTransform(double width)
   B->SetParameters(pB);
   
   RealToMovingType::FixedParametersType fp;
-  fp.SetSize( 2 );
+  fp.SetSize( 3 );
   fp[0] = width/2;
   fp[1] = 0;
+  fp[2] = 0;
   A->SetFixedParameters( fp );
   B->SetFixedParameters( fp );
   
@@ -96,7 +99,7 @@ int main( int argc, char *argv[] )
     }
   
   
-  const    unsigned int    Dimension = 2;
+  const    unsigned int    Dimension = 3;
   typedef double                                             PixelType;
 
   typedef itk::Image< PixelType, Dimension >                 FixedImageType;
@@ -144,7 +147,7 @@ int main( int argc, char *argv[] )
   
   registration->SetInitialTransform( initialTransform );
   
- // One level registration process without shrinking and smoothing.
+  // One level registration process without shrinking and smoothing.
   //
   const unsigned int numberOfLevels = 1;
 
@@ -165,9 +168,9 @@ int main( int argc, char *argv[] )
   upperBound[1] = 4.5;
   lowerBound[0] = 3.14 / 6;
   lowerBound[1] = 1.5;
-  upperBound[2] = -3.14 / 4;
+  upperBound[2] = -3.14 / 6;
   upperBound[3] = 4.5;
-  lowerBound[2] = -3.14 / 4;
+  lowerBound[2] = -3.14 / 3;
   lowerBound[3] = 1.5;
   optimizer->SetBoundSelection( boundSelect );
   optimizer->SetUpperBound( upperBound );
@@ -211,7 +214,7 @@ int main( int argc, char *argv[] )
   std::cout << "Scale along Y  = " << YScale << std::endl;
   std::cout << "Optimal metric value = " << bestValue << std::endl;
   
-  printTransform<2>( argv[2], argv[3], registration->GetTransform() );
+  printTransform<3>( argv[2], argv[3], registration->GetTransform() );
   //printTransform<2>(argv[2], "moving" + argv[3], registration->
 
   return EXIT_SUCCESS;
