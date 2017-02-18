@@ -80,7 +80,7 @@ public:
     std::cout << optimizer->GetCurrentIteration() << " = ";
     std::cout << optimizer->GetValue() << " : ";
     std::cout << optimizer->GetCurrentPosition() << std::endl;
-    printTransform( this->m_Infile, this->m_Outfile, this->m_Registration->GetTransform() );
+//    printTransform( this->m_Infile, this->m_Outfile, this->m_Registration->GetTransform() );
     
     }
 private: 

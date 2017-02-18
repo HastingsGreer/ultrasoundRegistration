@@ -43,7 +43,7 @@ limitations under the License.
 #include <itkCastImageFilter.h>
 
 #include <itkCommand.h>
-
+#include <string>
 
 itk::CompositeTransform<double, 3>::Pointer makeInitialTransform(double width)
 {
@@ -97,7 +97,6 @@ int main( int argc, char *argv[] )
       << std::endl;
     return EXIT_FAILURE;
     }
-  
   
   const    unsigned int    Dimension = 3;
   typedef double                                             PixelType;
@@ -215,7 +214,12 @@ int main( int argc, char *argv[] )
   std::cout << "Optimal metric value = " << bestValue << std::endl;
   
   printTransform<3>( argv[2], argv[3], registration->GetTransform() );
-  //printTransform<2>(argv[2], "moving" + argv[3], registration->
+  
+  std::string movingOutput = std::string("moving") + argv[3];
+  std::string fixedOutput = std::string("fixed") + argv[3];
+  printTransform<3>(argv[2], movingOutput.c_str(), registration->GetTransform()->GetNthTransform(0));
+  
+  printTransform<3>(argv[1], fixedOutput.c_str(), registration->GetTransform()->GetNthTransform(1)->GetInverseTransform());
 
   return EXIT_SUCCESS;
 }
