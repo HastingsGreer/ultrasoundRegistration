@@ -26,7 +26,7 @@ limitations under the License.
 
 #include "IterationUpdate.h"
 #include "ConvertTransform.h"
-
+#include "RegistrationParameters.h"
 
 #include <itkImageRegistrationMethodv4.h>
 #include <itkTranslationTransform.h>
@@ -36,7 +36,7 @@ limitations under the License.
 #include <itkLBFGSBOptimizerv4.h>
 #include <itkAffineTransform.h>
 #include <itkCompositeTransform.h>
-
+#include <itkTransformFileWriter.h>
 #include <itkImageFileReader.h> 
 
 #include <itkResampleImageFilter.h>
@@ -45,7 +45,7 @@ limitations under the License.
 #include <itkCommand.h>
 #include <string>
 
-itk::CompositeTransform<double, 3>::Pointer makeInitialTransform(double width)
+itk::CompositeTransform<double, 3>::Pointer makeInitialTransform(double width, RegistrationParameters param)
 {
   const    unsigned int    Dimension = 3;
   typedef itk::CompositeTransform< double, Dimension >       CompositeType;
@@ -58,16 +58,16 @@ itk::CompositeTransform<double, 3>::Pointer makeInitialTransform(double width)
   A->SetIdentity();
   RealToMovingType::ParametersType pA;
   pA.SetSize( 2 );
-  pA[0] = -3.14 / 6;
-  pA[1] = 2.0;
+  pA[0] = (param.minMovingAngle + param.maxMovingAngle)/2;
+  pA[1] = (param.minMovingStretch + param.maxMovingStretch)/2;
   A->SetParameters(pA);
   
   FixedToRealType::Pointer B = FixedToRealType::New();
   B->SetIdentity();
   FixedToRealType::ParametersType pB;
   pB.SetSize( 2 );
-  pB[0] = 3.14 / 6;
-  pB[1] = 2.0;
+  pB[0] = (param.minFixedAngle + param.maxFixedAngle)/2;
+  pB[1] = (param.minFixedStretch + param.maxFixedStretch)/2;
   B->SetParameters(pB);
   
   RealToMovingType::FixedParametersType fp;
@@ -88,16 +88,21 @@ itk::CompositeTransform<double, 3>::Pointer makeInitialTransform(double width)
 
 int main( int argc, char *argv[] )
 {
-  if( argc < 4 )
+  if( argc < 7)
     {
     std::cerr << "Missing Parameters " << std::endl;
     std::cerr << "Usage: " << argv[0];
     std::cerr << " fixedImageFile  movingImageFile ";
-    std::cerr << "outputImagefile fixedVolumeFile movingVolumeFile" 
+    std::cerr << "outputImagefile fixedVolumeFile movingVolumeFile parametersFile" 
       << std::endl;
     return EXIT_FAILURE;
     }
   
+  RegistrationParameters param = RegistrationParameters(argv[6]);
+  
+  std::cout << argv[6] << std::endl;
+  param.print();
+
   const    unsigned int    Dimension = 3;
   typedef double                                             PixelType;
 
@@ -140,7 +145,7 @@ int main( int argc, char *argv[] )
   std::cout << "width:" << width <<std::endl;
 
   
-  TransformType::Pointer initialTransform = makeInitialTransform( width );
+  TransformType::Pointer initialTransform = makeInitialTransform( width, param);
   std::cout << initialTransform->GetParameters() << std::endl;
   
   
@@ -163,14 +168,14 @@ int main( int argc, char *argv[] )
   OptimizerType::BoundValueType upperBound( numParameters );
   OptimizerType::BoundValueType lowerBound( numParameters );
   boundSelect.Fill( 2 ); //2 is a flag for "respect bounds"
-  upperBound[0] = 3.14 / 3;
-  upperBound[1] = 4.5;
-  lowerBound[0] = 3.14 / 6;
-  lowerBound[1] = 1.5;
-  upperBound[2] = -3.14 / 6;
-  upperBound[3] = 4.5;
-  lowerBound[2] = -3.14 / 3;
-  lowerBound[3] = 1.5;
+  upperBound[0] = param.maxMovingAngle;
+  upperBound[1] = param.maxMovingStretch;
+  lowerBound[0] = param.minMovingAngle;
+  lowerBound[1] = param.minMovingStretch;
+  upperBound[2] = param.maxFixedAngle;
+  upperBound[3] = param.maxFixedStretch;
+  lowerBound[2] = param.minFixedAngle;
+  lowerBound[3] = param.minFixedStretch;
   optimizer->SetBoundSelection( boundSelect );
   optimizer->SetUpperBound( upperBound );
   optimizer->SetLowerBound( lowerBound );
@@ -221,5 +226,12 @@ int main( int argc, char *argv[] )
   
   printTransform<3>(argv[1], fixedOutput.c_str(), registration->GetTransform()->GetNthTransform(1)->GetInverseTransform());
 
+
+  std::string tOutput = std::string("transform") + argv[3];
+  itk::TransformFileWriterTemplate<double>::Pointer writer = 
+    itk::TransformFileWriterTemplate<double>::New();
+  writer->SetInput(registration->GetTransform());
+  //writer->SetFileName(tOutput);
+  //writer->Update();
   return EXIT_SUCCESS;
 }
