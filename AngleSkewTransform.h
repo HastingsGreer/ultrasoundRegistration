@@ -49,7 +49,7 @@ public:
   typedef itk::SmartPointer<const Self> ConstPointer;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro(SkewTransform, itk::MatrixOffsetTransformBase);
+  itkTypeMacro(AngleSkewTransform, itk::MatrixOffsetTransformBase);
 
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro(Self);
