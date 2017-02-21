@@ -82,7 +82,7 @@ itk::CompositeTransform<double, 3>::Pointer makeInitialTransform(double width, R
   initialTransform->AddTransform( B );
   
   //Fixed(x)  $= Moving(A(B(x))
-  
+  std::cout << initialTransform << std::endl;
   return initialTransform;
 }
 
@@ -93,7 +93,7 @@ int main( int argc, char *argv[] )
     std::cerr << "Missing Parameters " << std::endl;
     std::cerr << "Usage: " << argv[0];
     std::cerr << " fixedImageFile  movingImageFile ";
-    std::cerr << "outputImagefile fixedVolumeFile movingVolumeFile parametersFile" 
+    std::cerr << "outputDir fixedVolumeFile movingVolumeFile parametersFile" 
       << std::endl;
     return EXIT_FAILURE;
     }
@@ -218,20 +218,20 @@ int main( int argc, char *argv[] )
   std::cout << "Scale along Y  = " << YScale << std::endl;
   std::cout << "Optimal metric value = " << bestValue << std::endl;
   
-  printTransform<3>( argv[2], argv[3], registration->GetTransform() );
+  //printTransform<3>( argv[2], argv[3], registration->GetTransform() );
   
-  std::string movingOutput = std::string("moving") + argv[3];
-  std::string fixedOutput = std::string("fixed") + argv[3];
+  std::string movingOutput = argv[3] + std::string("moving.mha");
+  std::string fixedOutput = argv[3] + std::string("fixed.mha");
   printTransform<3>(argv[2], movingOutput.c_str(), registration->GetTransform()->GetNthTransform(0));
   
   printTransform<3>(argv[1], fixedOutput.c_str(), registration->GetTransform()->GetNthTransform(1)->GetInverseTransform());
 
 
-  std::string tOutput = std::string("transform") + argv[3];
+  std::string tOutput = argv[3] + std::string("transform.tfm");
   itk::TransformFileWriterTemplate<double>::Pointer writer = 
     itk::TransformFileWriterTemplate<double>::New();
   writer->SetInput(registration->GetTransform());
-  //writer->SetFileName(tOutput);
-  //writer->Update();
+  writer->SetFileName(tOutput);
+  writer->Update();
   return EXIT_SUCCESS;
 }
